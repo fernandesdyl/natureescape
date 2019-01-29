@@ -1,0 +1,304 @@
+<html>
+    <head>
+        <title>Natureescape</title>
+
+        
+
+        <script type="text/javascript" src="js/config.js"></script>
+
+        <link rel="stylesheet" href="lib/layerswitcher/ol3-layerswitcher.css" type="text/css">
+        <script src="lib/layerswitcher/ol3-layerswitcher.js" type="text/javascript"></script>
+        
+        <script type="text/javascript">
+
+            var map, lyrs;
+            $(document).ready(function () {
+                map = new ol.Map({
+                    target: 'map',
+                    layers: [
+                        new ol.layer.Group({
+                            title: 'Couches de références',
+                            layers: [
+                            new ol.layer.Tile({
+                                title: 'Le monde vue satellite avec informations',
+                                type: "base",
+                                source: new ol.source.BingMaps({
+                                      key: 'AqE05oJsq-bWa50FPOW2S0eQm9Oqqygc1VTi_WPhUIoKR_-jgA559CRbfndgWAIz',
+                                      imagerySet: 'AerialWithLabels'
+                                }),
+                            }),
+                            new ol.layer.Tile({
+                                title: "Le monde vue satellite",
+                                type: "base",
+                                source: new ol.source.BingMaps({
+                                      key: 'AqE05oJsq-bWa50FPOW2S0eQm9Oqqygc1VTi_WPhUIoKR_-jgA559CRbfndgWAIz',
+                                      imagerySet: 'Aerial'
+                                }),
+                            }),
+                            new ol.layer.Image({
+                                type: "base",
+                                title: 'Vide',
+                            }),
+                            new ol.layer.Tile({
+                                    title: 'Le monde avec informations',
+                                type: "base",
+                                source: new ol.source.OSM()
+                            }),
+                            ]
+                        }),
+                        new ol.layer.Group({
+                            title: 'Couche de superpositions',
+                            layers: [
+                            new ol.layer.Vector({
+                                title: 'Lacs',
+                                visible: false,
+                                style: new ol.style.Style({
+                                    fill: new ol.style.Fill({
+                                                color: [51, 119, 181, 0.5]
+                                            }),
+                                    stroke: new ol.style.Stroke({
+                                        color: [51, 119, 181, 254],
+                                        width: 0.5
+                                    })
+                                }),
+                                source: new ol.source.Vector({
+                                    url: "https://celineobr.carto.com/api/v2/sql?q=select*from%20lac&format=GeoJSON" + "&api_key=9891dd599397d4887e9d30914594856a78206c6f",
+                                    format: new ol.format.GeoJSON()
+                                })
+                             }), 
+                            new ol.layer.Image({
+                                title: 'Forêts',
+                                visible: false,
+                                source: new ol.source.ImageWMS({
+                                    url: chWMS,
+                                    params: {
+                                        VERSION: "1.0.0",
+                                        LAYERS: 'ch.bafu.ren-wald',
+                                        FORMAT: 'image/png',
+                                    },
+                                })
+                            }),
+                            
+                            new ol.layer.Image({
+                                title: 'Zones de tranquilitées',
+                                visible: false,
+                                source: new ol.source.ImageWMS({
+                                    url: chWMS,
+                                    params: {
+                                        VERSION: "1.0.0",
+                                        LAYERS: 'ch.bafu.wrz-wildruhezonen_portal',
+                                        FORMAT: 'image/png'
+                                    }
+                                })
+                            }),
+                            new ol.layer.Vector({
+                                title: 'Parcs Nationaux',
+                                visible: false,
+                                style: new ol.style.Style({
+                                    fill: new ol.style.Fill({
+                                        color: [255, 153, 153, 0.5]
+                                    })
+                                }),
+                                source: new ol.source.Vector({
+                                    url: "https://celineobr.carto.com/api/v2/sql?q=select*from%20parcnationals&format=GeoJSON" + "&api_key=9891dd599397d4887e9d30914594856a78206c6f",
+                                    format: new ol.format.GeoJSON()
+                                })
+                             }),
+                             new ol.layer.Vector({
+                                title: 'Sites Naturels UNESCO',
+                                visible: false,
+                                style: new ol.style.Style({
+                                    fill: new ol.style.Fill({
+                                        color: [100, 153, 100, 0.5]
+                                    }),
+                                    stroke: new ol.style.Stroke({
+                                        color: [100, 153, 100, 0.5],
+                                        width: 2
+                                    })
+                                }),
+                                source: new ol.source.Vector({
+                                    url: "https://celineobr.carto.com/api/v2/sql?q=select*from%20natureunesco&format=GeoJSON" + "&api_key=9891dd599397d4887e9d30914594856a78206c6f",
+                                    format: new ol.format.GeoJSON()
+                                })
+                             }),
+                             new ol.layer.Image({
+                                title: 'Bruit du traffic routier de jour',
+                                visible: false,
+                                source: new ol.source.ImageWMS({
+                                    url: chWMS,
+                                    params: {
+                                        VERSION: "1.0.0",
+                                        LAYERS: 'ch.bafu.laerm-strassenlaerm_tag',
+                                        FORMAT: 'image/png'
+                                    }
+                                })
+                            }),
+                            new ol.layer.Image({
+                                title: 'Bruit ferroviaire jour',
+                                visible: false,
+                                source: new ol.source.ImageWMS({
+                                    url: chWMS,
+                                    params: {
+                                        VERSION: "1.0.0",
+                                        LAYERS: 'ch.bafu.laerm-bahnlaerm_tag',
+                                        FORMAT: 'image/png'
+                                    }
+                                })
+                            }),
+                            new ol.layer.Image({
+                                title: 'Habitants',
+                                visible: false,
+                                source: new ol.source.ImageWMS({
+                                    url: chWMS,
+                                    params: {
+                                        VERSION: "1.0.0",
+                                        LAYERS: 'ch.bfs.volkszaehlung-bevoelkerungsstatistik_einwohner',
+                                        FORMAT: 'image/png'
+                                    }
+                                })
+                            }), 
+                            new ol.layer.Image({
+                                title: 'Sites pollués par les transports publics',
+                                visible: false,
+                                source: new ol.source.ImageWMS({
+                                    url: chWMS,
+                                    params: {
+                                        VERSION: "1.0.0",
+                                        LAYERS: 'ch.bav.kataster-belasteter-standorte-oev.oereb',
+                                        FORMAT: 'image/png'
+                                    }
+                                })
+                            }), 
+                            new ol.layer.Vector({
+                                title: 'Limites cantonales',
+                                visible: true,
+                                style: new ol.style.Style({
+                                    stroke: new ol.style.Stroke({
+                                        color: [180,180, 180, 180],
+                                        width: 1
+                                    })
+                                }),
+                                source: new ol.source.Vector({
+                                    url: "https://celineobr.carto.com/api/v2/sql?q=select*from%20limitescantonales&format=GeoJSON" + "&api_key=9891dd599397d4887e9d30914594856a78206c6f",
+                                    format: new ol.format.GeoJSON()
+                                })
+                             }),
+                            ]
+                        }),
+                         
+                        
+                                                                 
+                    ]
+                });
+                
+                map.getView().setCenter(ol.proj.transform([8, 46.8], "EPSG:4326", "EPSG:3857"))
+                map.getView().setZoom(8);
+                var view = map.getView();
+
+                var layerSwitcher = new ol.control.LayerSwitcher();
+                map.addControl(layerSwitcher);  
+
+
+
+
+                map.on('pointermove', function (e) {
+                    var coordinates = ol.proj.transform(e.coordinate,"EPSG:3857","EPSG:4326");
+                    coordinates = String(coordinates);
+                    coordinates = coordinates.split(",");
+                    $("#info").html(
+                      "Lat/Long: "
+                      + coordinates[1]+","+coordinates[0]
+                    );
+                });
+                
+                
+
+
+              
+
+
+
+
+                //code inspiré du site : https://www.geomatick.com/2017/01/30/openlayers-zoom-sur-la-geolocalisation/
+                // Objet géographique de la position de géolocalisation
+            var ObjPosition = new ol.Feature();
+            // Attribution d'un style à l'objet
+            ObjPosition.setStyle(new ol.style.Style({
+                image: new ol.style.Circle({
+                    radius: 6,
+                    fill: new ol.style.Fill({
+                        color: '#3399CC'
+                    }),
+                    stroke: new ol.style.Stroke({
+                        color: '#fff',
+                        width: 2
+                    })
+                })
+            }));
+            // Géolocalisation
+            var geolocation = new ol.Geolocation({
+              // On déclenche la géolocalisation
+              tracking: true,
+              // Important : Projection de la carte
+              projection: view.getProjection()
+            }); 
+            // On scrute les changements des propriétés
+            geolocation.on('change', function(evt) {
+                var precision = geolocation.getAccuracy();
+                $("#precision").html(precision);
+                var position = geolocation.getPosition();
+                // On transforme la projection des coordonnées
+                var newPosition=ol.proj.transform(position, 'EPSG:3857','EPSG:4326');
+                $("#latitude").html(newPosition[1]);
+                $("#longitude").html(newPosition[0]);
+                // Attribution de la géométrie de ObjPosition avec les coordonnées de la position
+                ObjPosition.setGeometry( position ? new ol.geom.Point(position) : null );
+            });
+            // On alerte si une erreur est trouvée
+            geolocation.on('error', function(erreur) {
+                alert('Echec de la géolocalisation : ' +erreur.message);       
+            });
+            // Source du vecteur contenant l'objet géographique
+            var sourceVecteur = new ol.source.Vector({
+                    features: [ObjPosition]
+            });
+            // Couche vectorielle 
+            var vecteur = new ol.layer.Vector({
+                map: map,
+                source: sourceVecteur
+            });
+            
+            });
+        
+        
+
+
+          
+             function test() {
+                    alert(document.getElementById("info").textContent);
+                }
+        </script>
+
+        <style type="text/css">
+            #map {
+                width: 100%;
+                height: 98%;
+            }
+            #info {
+                position: absolute;
+                top: 15px;
+                left: 60px;
+                background-color: #fff;
+                padding: 5px;
+                font-size: small;
+            }
+        </style>
+    </head>
+    <body ondblclick="test()">
+        <div id="map"></div>
+        <div id="info"></div>
+        <div>
+            Localisation -> Précision : <span id="precision"></span> m | Position : <span id="latitude"></span>° ; <span id="longitude"></span>°
+        </div>
+    </body>
+</html>
